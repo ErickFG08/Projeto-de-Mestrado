@@ -1,0 +1,84 @@
+
+display Pac_x > saidas\Pac_nao_cooperativo.xls;
+display Qac_x > saidas\Qac_nao_cooperativo.xls;
+display Tin_x > saidas\Tin_nao_cooperativo.xls;
+display Tparede_x > saidas\Tparede_nao_cooperativo.xls;
+display Tout_x > saidas\Tout_nao_cooperativo.xls;
+
+display desconforto_x > saidas\desconforto_nao_cooperativo.xls;
+display carga_bateria_x > saidas\carga_bateria_nao_cooperativo.xls;
+
+display mod_Pac_freq_x > saidas\mod_Pac_freq_nao_cooperativo.xls;
+display mod_Qac_freq_x > saidas\mod_Qac_freq_nao_cooperativo.xls;
+display mod_Pac_Tout_x > saidas\mod_Pac_Tout_nao_cooperativo.xls;
+display mod_Qac_Tout_x > saidas\mod_Qac_Tout_nao_cooperativo.xls;
+
+
+
+
+
+
+
+
+
+
+
+
+
+display COP_x > saidas\COP_nao_cooperativo.xls;
+
+
+
+
+
+
+
+
+
+
+
+printf "\nModelo Não-Cooperativo \n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "\nTempo de Execucao: %f minutos \n\n", _solve_elapsed_time/60 > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Índice de Desconforto\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n",  sum{w in AC, t in Ot, f in Of} desconforto_x[w,t,f]/card(Ot)/card(AC) > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo ACs\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_consumo_ac[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo Baterias\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_consumo_bat[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo PFVs\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_consumo_pfv[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo Aparelhos\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_consumo_aparelhos[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_gasto_sem_bateria[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca com baterias\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_gasto_com_bateria[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca com baterias e paineis\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_gasto_com_bateria_e_paineis[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "Perdas\n" > saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "%4f \n", sum{x in AC}saida_fo_perdas[x] > saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+printf "----------------------------------------------------------------------------\n" >> saidas\funcoes_objetivo_nao_cooperativo.txt;
+printf "----------------------------------------------------------------------------\n\n" >> saidas\funcoes_objetivo_nao_cooperativo.txt;
+
+option omit_zero_cols 0;
+
+display on_off_x > saidas\on_off_nao_cooperativo.xls;
+display frequency_ac_x > saidas\frequency_ac_nao_cooperativo.xls;
+display pot_bateria_x > saidas\pot_bateria_nao_cooperativo.xls;
+display pot_pfv_x > saidas\pot_pfv_nao_cooperativo.xls;
+
+option omit_zero_cols 1;
+
+
+

@@ -1,0 +1,102 @@
+# Ajuste das impedâncias
+for {(i,j) in Ol} {
+	let Raa[i,j] := Raa[i,j]/1000;
+	let Xaa[i,j] := Xaa[i,j]/1000;
+	let Rbb[i,j] := Rbb[i,j]/1000;
+	let Xbb[i,j] := Xbb[i,j]/1000;
+	let Rcc[i,j] := Rcc[i,j]/1000;
+	let Xcc[i,j] := Xcc[i,j]/1000;
+	let Rab[i,j] := Rab[i,j]/1000;
+	let Xab[i,j] := Xab[i,j]/1000;
+	let Rac[i,j] := Rac[i,j]/1000;
+	let Xac[i,j] := Xac[i,j]/1000;
+	let Rbc[i,j] := Rbc[i,j]/1000;
+	let Xbc[i,j] := Xbc[i,j]/1000;
+};
+
+# Cálculo das tensões mínimas e máximas dos nós
+
+for {k in Ob}{
+	if (Nivel_b[k] == 1) then {
+		let Vnom[k] := 24.9 / sqrt(3);
+		let Vmin[k] := Vmino * 24.9 / sqrt(3);
+		let Vmax[k] := Vmaxo * 24.9 / sqrt(3);
+	}
+	if (Nivel_b[k] == 2) then {
+		let Vnom[k] := 0.480 / sqrt(3);
+		let Vmin[k] := Vmino * 0.480 / sqrt(3);
+		let Vmax[k] := Vmaxo * 0.480 / sqrt(3);
+	}
+};
+
+# Cálculo das estimações das tensões (Utiliza flat start)
+
+for {k in Ob}{
+	if (Nivel_b[k] == 1) then {
+		let Vrae[k] :=  1.000 * 24.9 / sqrt(3);
+		let Viae[k] :=  0.000 * 24.9 / sqrt(3);
+		let Vrbe[k] := -0.500 * 24.9 / sqrt(3);
+		let Vibe[k] := -0.866 * 24.9 / sqrt(3);
+		let Vrce[k] := -0.500 * 24.9 / sqrt(3);
+		let Vice[k] :=  0.866 * 24.9 / sqrt(3);
+	}
+	if (Nivel_b[k] == 2) then {
+		let Vrae[k] :=  1.000 * 0.480 / sqrt(3);
+		let Viae[k] :=  0.000 * 0.480 / sqrt(3);
+		let Vrbe[k] := -0.500 * 0.480 / sqrt(3);
+		let Vibe[k] := -0.866 * 0.480 / sqrt(3);
+		let Vrce[k] := -0.500 * 0.480 / sqrt(3);
+		let Vice[k] :=  0.866 * 0.480 / sqrt(3);
+	}
+};
+
+# Cálculo das relações de transformação
+
+for {(i,j) in Ol}{
+	if (Nivel_l[i,j] == 1)   then let at[i,j] := 1.0;
+	if (Nivel_l[i,j] == 2) 	 then let at[i,j] := 1.0;
+	if (Nivel_l[i,j] == 999) then let at[i,j] := 24.9 / 0.480;
+};
+
+# Parâmetros da linearização das correntes
+
+let lambda := 20;
+for {(i,j) in Ol}{
+	let delmax[i,j] := (Imax[i,j])/lambda;
+}
+for {(i,j) in Ol, l in 1..lambda}{
+	if (l == 1) then {
+		let m[i,j,l] := (5/6)*delmax[i,j];
+	}
+	if (l > 1) then {
+		let m[i,j,l] := (2*l-1)*delmax[i,j];
+	}
+};
+
+# Fixar as tensões trifásicas de todas as subestações fluxo inicial
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Vra[i,t] := 24.9/sqrt(3)*cos(0);
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Vrb[i,t] := 24.9/sqrt(3)*cos(-2.0944);
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Vrc[i,t] := 24.9/sqrt(3)*cos(2.0944);
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Via[i,t] := 24.9/sqrt(3)*sin(0);
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Vib[i,t] := 24.9/sqrt(3)*sin(-2.0944);
+fix {i in Ob, t in Ot: Tipo[i] == 1}
+	Vic[i,t] := 24.9/sqrt(3)*sin(2.0944);
+
+# Fixa em zero a corrente da SE para os nós de carga
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISra[i,t] := 0;
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISrb[i,t] := 0;
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISrc[i,t] := 0;
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISia[i,t] := 0;
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISib[i,t] := 0;
+fix {i in Ob, t in Ot : Tipo[i] == 0}
+	ISic[i,t] := 0;

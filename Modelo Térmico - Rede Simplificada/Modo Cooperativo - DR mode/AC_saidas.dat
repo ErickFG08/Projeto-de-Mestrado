@@ -1,0 +1,104 @@
+
+display Pac > saidas\Pac_cooperativo.xls;
+display Qac > saidas\Qac_cooperativo.xls;
+display Tin > saidas\Tin_cooperativo.xls;
+display Tparede > saidas\Tparede_cooperativo.xls;
+display Tout > saidas\Tout_cooperativo.xls;
+
+display carga_bateria > saidas\carga_bateria_cooperativo.xls;
+
+display mod_Pac_freq > saidas\mod_Pac_freq_cooperativo.xls;
+display mod_Qac_freq > saidas\mod_Qac_freq_cooperativo.xls;
+display mod_Pac_Tout > saidas\mod_Pac_Tout_cooperativo.xls;
+display mod_Qac_Tout > saidas\mod_Qac_Tout_cooperativo.xls;
+
+var COP{AC,Ot,Of};
+ for {w in AC}{
+	for{t in Ot}{
+		for {f in Of}{
+					if (Pac[w,t,f] == 0) then {
+					let COP[w,t,f] := 0;
+					}
+					else{
+					let COP[w,t,f] := Qac[w,t,f]/Pac[w,t,f];
+					}
+		}
+	}
+ }	display COP > saidas\COP_cooperativo.xls;
+
+var desconforto_calculado{AC,Ot,Of};
+
+ for {w in AC}{
+	for{t in Ot}{
+		let desconforto_calculado[w,t,1] := abs(Tin[w,t,1] - Tset_casa[w]) * AC_Fase_a[w];
+		let desconforto_calculado[w,t,2] := abs(Tin[w,t,2] - Tset_casa[w]) * AC_Fase_b[w];
+		let desconforto_calculado[w,t,3] := abs(Tin[w,t,3] - Tset_casa[w]) * AC_Fase_c[w];
+	}
+ }	display desconforto_calculado > saidas\desconforto_calculado_cooperativo.xls;
+
+printf "\nModelo Cooperativo \n" > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "\nTempo de Execucao: %f minutos \n", _solve_elapsed_time/60 > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "\nÍndice de Desconforto\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n",  sum{w in AC, t in Ot, f in Of} desconforto_calculado[w,t,f]/card(Ot)/card(AC) > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo ACs\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_consumo_ac > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo Baterias\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_consumo_bat > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo PFVs\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_consumo_pfv > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo Aparelhos\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_consumo_aparelhos > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_gasto_sem_bateria > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca com baterias\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_gasto_com_bateria > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Consumo de Energia com Tarifa Branca com baterias e paineis\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_gasto_com_bateria_e_paineis > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "Perdas\n" > saidas\funcoes_objetivo_cooperativo.txt;
+printf "%4f \n", fo_perdas > saidas\funcoes_objetivo_cooperativo.txt;
+
+printf "----------------------------------------------------------------------------\n" >> saidas\funcoes_objetivo_cooperativo.txt;
+printf "----------------------------------------------------------------------------\n\n" >> saidas\funcoes_objetivo_cooperativo.txt;
+
+option omit_zero_cols 0;
+
+display on_off > saidas\on_off_cooperativo.xls;
+display frequency_ac > saidas\frequency_ac_cooperativo.xls;
+display pot_bateria > saidas\pot_bateria_cooperativo.xls;
+display pot_pfv > saidas\pot_pfv_cooperativo.xls;
+
+option omit_zero_cols 1;
+
+param perdas{Ot,Of};
+
+for {t in Ot}
+{
+    for{f in Of}
+        {   
+        let perdas[t,f] := sum{x in AC}(Pac[x,t,f] - pot_bateria[x,t,f] + pot_pfv[x,t,f])^2 * tarifa_branca[t] * dT * preco_energia;  
+        }
+}
+
+display perdas > saidas\perdas.xls;
+
+
+
+
+
+
+
+
+
+
+
+

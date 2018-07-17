@@ -1,0 +1,62 @@
+###################################################################################
+########################## Modelo Simplicado dos ACs #############################
+
+reset;	# apaga a memoria
+
+# ----------------------------------------------------
+# 	Modelo linearizado
+# ----------------------------------------------------
+
+# Leitura do modelo
+model AC.mod;
+
+# Dados do sistema
+data AC.dat;
+
+# Define o solver e as opções
+option solver CPLEXamp;
+option display_1col 0;
+option display_round 4;
+option display_width 1000;
+option omit_zero_cols 1;
+option cplex_options "mipdisplay=0 mipinterval=20 mipgap=0 probe=3"; 
+
+# Resolve o modelo matemático do ponto de operação inicial
+
+param saida_fo_gasto_sem_bateria{w in AC};
+param saida_fo_gasto_com_bateria{w in AC};
+param saida_fo_gasto_com_bateria_e_paineis{w in AC};
+param saida_fo_perdas{w in AC};
+
+param carga_bateria_x{BAT,Ot,Of};
+param Pac_x{AC,Ot,Of};
+param Qac_x{AC,Ot,Of};
+param Tin_x{AC,Ot,Of};
+param Tparede_x{AC,Ot,Of};;
+param Tout_x{Ot};
+param mod_Pac_freq_x{AC,Ot,Of};
+param mod_Qac_freq_x{AC,Ot,Of};
+param mod_Pac_Tout_x{Ot};
+param mod_Qac_Tout_x{Ot};
+param COP_x{AC,Ot,Of};
+
+param on_off_x{AC,Ot,Of};
+param frequency_ac_x{AC,Ot,Of};
+param pot_bateria_x{AC,Ot,Of};
+param pot_pfv_x{AC,Ot,Of};
+
+#solve fo_desconforto;
+#solve fo_consumo_ac;
+#solve fo_consumo_pfv;
+#solve fo_consumo_bat;
+#solve fo_consumo_aparelhos;
+#solve fo_gasto_sem_bateria;
+#solve fo_gasto_com_bateria;
+#solve fo_gasto_com_bateria_e_paineis;
+solve fo_perdas;
+
+data AC_saidas.dat;
+
+printf "Arquivos Criados!!!\n";
+printf "Tempo de Execucao: %f minutos \n", _solve_elapsed_time/60;
+
