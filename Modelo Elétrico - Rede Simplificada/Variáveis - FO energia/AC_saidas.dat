@@ -191,8 +191,9 @@ option display_width 1000;
 
 # Baterias
 display carga_bateria>saidas\saida_carga_bateria.xls;
-display pot_bateria_ativa>saidas\saida_pot_bateria_ativa.xls;
-display pot_bateria_reativa>saidas\saida_pot_bateria_reativa.xls;
+display Pbateria_carga>saidas\Pbateria_carga.xls;
+display Pbateria_descarga>saidas\Pbateria_descarga.xls;
+display Qbateria_descarga>saidas\Qbateria_descarga.xls;
 
 # PFVs
 display pot_pfv>saidas\saida_pot_pfv.xls;
