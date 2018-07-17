@@ -699,10 +699,10 @@ param Tinicial = 2.0;
 	carga_bateria[b,t,f] = carga_bateria[b,1,f];
 
 
-	subject to restricao_bat_1_1{b in BAT, t in Ot, f in Of : t = card(Ot) - 1}:
+	subject to restricao_bat_1_1{b in BAT, t in Ot, f in Of}:
 	carga_bateria[b,t,f] <= capacidade_bat[b];
 
-	subject to restricao_bat_1_2{b in BAT, t in Ot, f in Of : t = card(Ot) - 1}:
+	subject to restricao_bat_1_2{b in BAT, t in Ot, f in Of}:
 	0 <= carga_bateria[b,t,f];
 
 
