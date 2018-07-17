@@ -733,7 +733,7 @@ param Tinicial = 2.0;
 
 	
 	subject to restricao_bat_potencia_aparente{b in BAT, t in Ot, f in Of}:
-	(Pbateria_carga[b,t,f])^2 + (Pbateria_descarga[b,t,f])^2  <= (5.8)^2;
+	(Pbateria_descarga[b,t,f])^2 + (Qbateria_descarga[b,t,f])^2  <= (5.8)^2;
 
 	
 	subject to Ire_BAT_aprox_linear_a {b in BAT, t in Ot}:
