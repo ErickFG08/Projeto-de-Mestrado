@@ -27,10 +27,10 @@ option cplex_options "mipdisplay=5";
 
 #solve fo_desconforto;
 #solve fo_consumo_energia_ativa_com_tarifa;
-#solve fo_consumo_energia_ativa_sem_tarifa;
+solve fo_consumo_energia_ativa_sem_tarifa;
 #solve fo_consumo_energia_reativa_com_tarifa;
 #solve fo_consumo_energia_reativa_sem_tarifa;
-solve fo_consumo_energia_com_tarifa;
+#solve fo_consumo_energia_com_tarifa;
 #solve fo_consumo_energia_sem_tarifa;
 #solve fo_consumo_ac_com_tarifa;
 #solve fo_consumo_ac_sem_tarifa;
