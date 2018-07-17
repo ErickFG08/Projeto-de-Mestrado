@@ -130,6 +130,7 @@ param : Ot:		fdem		Tout	   Irradiacao_sem_nuvem     tarifa_branca:=
 94	0.85	30.43   0.00	0.84
 95	0.83	29.25   0.00	0.84
 96	0.82	28.08   0.00	0.84
+97	0.78	26.90   0.00	0.84
 ;
 
 param : AC: AC_Fase_a   AC_Fase_b   AC_Fase_c        Ra      Ca      Rm      Cm	   Pnom_ac COP_nom Tset_casa:=
@@ -147,19 +148,19 @@ param : AC: AC_Fase_a   AC_Fase_b   AC_Fase_c        Ra      Ca      Rm      Cm	
 412	    0	0	1	2.31	3.25	0.94	6.60	1.51	2.93	23
 ;
 
-param: BAT : potencia_nom_bat    eficiencia_bat	         capacidade_bat	   BAT_Fase_a		BAT_Fase_b		BAT_Fase_c	:=
-401	        5   0.95	13.5	1	0	0
-402	        5   0.95	13.5	1	0	0
-403	        5   0.95	13.5	0	0	1
-404	        5   0.95	13.5	1	0	0
-405	        5   0.95	13.5	1	0	0
-406	        5   0.95	13.5	0	1	0
-407	        5   0.95	13.5	0	1	0
-408	        5   0.95	13.5	0	0	1
-409	        5   0.95	13.5	0	1	0
-410	        5   0.95	13.5	1	0	0
-411	        5   0.95	13.5	0	1	0
-412	        5   0.95	13.5	0	0	1
+param: BAT : potencia_nom_bat	         capacidade_bat	   BAT_Fase_a		BAT_Fase_b		BAT_Fase_c	:=
+401	        5	13.5	1	0	0
+402	        5	13.5	1	0	0
+403	        5	13.5	0	0	1
+404	        5	13.5	1	0	0
+405	        5	13.5	1	0	0
+406	        5	13.5	0	1	0
+407	        5	13.5	0	1	0
+408	        5	13.5	0	0	1
+409	        5	13.5	0	1	0
+410	        5	13.5	1	0	0
+411	        5	13.5	0	1	0
+412	        5	13.5	0	0	1
 ;
 
 # Painéis fotovoltaicos
