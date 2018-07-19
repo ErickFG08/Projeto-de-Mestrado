@@ -298,8 +298,9 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 	minimize fo_consumo_energia_com_tarifa:
 						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t] +
-							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] -
-							 ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
+							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] ) +
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
+							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
 							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] );
 							 
 	minimize fo_consumo_energia_ativa_sem_tarifa:
@@ -315,8 +316,9 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 	minimize fo_consumo_energia_sem_tarifa:
 						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * preco_energia) *
 							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t] +
-							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] -
-							 ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
+							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] ) +
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
+							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
 							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] );
 
 # Consumo de energia dos aparelhos de AC
@@ -787,32 +789,32 @@ param Tinicial = 2.0;
 	
 	# Restricoes de carga e descarga da bateria
 
-	subject to limitacao_carga_descarga_bateria_a1 {b in BAT, t in Ot : BAT_Fase_a[b] == 1 and t > 1}:
-	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];	
-
-	subject to limitacao_carga_descarga_bateria_a2 {b in BAT, t in Ot : BAT_Fase_a[b] == 1 and t > 1}:
-	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];
-	
-	subject to limitacao_carga_descarga_bateria_a3 {b in BAT : BAT_Fase_a[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 4 * capacidade_bat[b];
-	
-	subject to limitacao_carga_descarga_bateria_b1 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
-	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];	
-
-	subject to limitacao_carga_descarga_bateria_b2 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
-	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];
-	
-	subject to limitacao_carga_descarga_bateria_b3 {b in BAT : BAT_Fase_b[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 4 * capacidade_bat[b];
-	
-	subject to limitacao_carga_descarga_bateria_c1 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
-	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];	
-
-	subject to limitacao_carga_descarga_bateria_c2 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
-	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];
-	
-	subject to limitacao_carga_descarga_bateria_c3 {b in BAT : BAT_Fase_c[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 4 * capacidade_bat[b];
+#	subject to limitacao_carga_descarga_bateria_a1 {b in BAT, t in Ot : BAT_Fase_a[b] == 1 and t > 1}:
+#	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];	
+#
+#	subject to limitacao_carga_descarga_bateria_a2 {b in BAT, t in Ot : BAT_Fase_a[b] == 1 and t > 1}:
+#	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];
+#	
+#	subject to limitacao_carga_descarga_bateria_a3 {b in BAT : BAT_Fase_a[b] == 1}:
+#	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 4 * capacidade_bat[b];
+#	
+#	subject to limitacao_carga_descarga_bateria_b1 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
+#	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];	
+#
+#	subject to limitacao_carga_descarga_bateria_b2 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
+#	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];
+#	
+#	subject to limitacao_carga_descarga_bateria_b3 {b in BAT : BAT_Fase_b[b] == 1}:
+#	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 4 * capacidade_bat[b];
+#	
+#	subject to limitacao_carga_descarga_bateria_c1 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
+#	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];	
+#
+#	subject to limitacao_carga_descarga_bateria_c2 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
+#	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];
+#	
+#	subject to limitacao_carga_descarga_bateria_c3 {b in BAT : BAT_Fase_c[b] == 1}:
+#	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 4 * capacidade_bat[b];
 	
 	
 # END BATTERY

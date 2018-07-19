@@ -184,5 +184,5 @@ param: PFV: 	potencia_nom_pfv	eficiencia_pfv 	  num_placas_pfv	    area_pfv		PFV
 # Pot BAT é 5;
 
 # Tensões mínima e máxima do sistema em p.u.
-let Vmino := 0.90;
-let Vmaxo := 1.10;
+let Vmino := 1.00;
+let Vmaxo := 1.00;
