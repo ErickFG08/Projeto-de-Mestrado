@@ -149,9 +149,9 @@ param : AC: AC_Fase_a   AC_Fase_b   AC_Fase_c        Ra      Ca      Rm      Cm	
 ;
 
 param: BAT : potencia_nom_bat_max	 potencia_nom_bat_min        capacidade_bat	   BAT_Fase_a		BAT_Fase_b		BAT_Fase_c	:=
-403	        5	0.5   13.5	0	0	1
-402	        5	0.5   13.5	1	0	0
 401	        5	0.5   13.5	1	0	0
+402	        5	0.5   13.5	1	0	0
+403	        5	0.5   13.5	0	0	1
 404	        5	0.5   13.5	1	0	0
 405	        5	0.5   13.5	1	0	0
 406	        5	0.5   13.5	0	1	0
