@@ -148,19 +148,19 @@ param : AC: AC_Fase_a   AC_Fase_b   AC_Fase_c        Ra      Ca      Rm      Cm	
 412	    0	0	1	2.31	3.25	0.94	6.60	1.51	2.93	23
 ;
 
-param: BAT : potencia_nom_bat	         capacidade_bat	   BAT_Fase_a		BAT_Fase_b		BAT_Fase_c	:=
-401	        5	13.5	1	0	0
-402	        5	13.5	1	0	0
-403	        5	13.5	0	0	1
-404	        5	13.5	1	0	0
-405	        5	13.5	1	0	0
-406	        5	13.5	0	1	0
-407	        5	13.5	0	1	0
-408	        5	13.5	0	0	1
-409	        5	13.5	0	1	0
-410	        5	13.5	1	0	0
-411	        5	13.5	0	1	0
-412	        5	13.5	0	0	1
+param: BAT : potencia_nom_bat_max	 potencia_nom_bat_min        capacidade_bat	   BAT_Fase_a		BAT_Fase_b		BAT_Fase_c	:=
+403	        5	0.5   13.5	0	0	1
+402	        5	0.5   13.5	1	0	0
+401	        5	0.5   13.5	1	0	0
+404	        5	0.5   13.5	1	0	0
+405	        5	0.5   13.5	1	0	0
+406	        5	0.5   13.5	0	1	0
+407	        5	0.5   13.5	0	1	0
+408	        5	0.5   13.5	0	0	1
+409	        5	0.5   13.5	0	1	0
+410	        5	0.5   13.5	1	0	0
+411	        5	0.5   13.5	0	1	0
+412	        5	0.5   13.5	0	0	1
 ;
 
 # Painéis fotovoltaicos
@@ -184,5 +184,5 @@ param: PFV: 	potencia_nom_pfv	eficiencia_pfv 	  num_placas_pfv	    area_pfv		PFV
 # Pot BAT é 5;
 
 # Tensões mínima e máxima do sistema em p.u.
-let Vmino := 1.00;
-let Vmaxo := 1.00;
+let Vmino := 0.90;
+let Vmaxo := 1.05;
