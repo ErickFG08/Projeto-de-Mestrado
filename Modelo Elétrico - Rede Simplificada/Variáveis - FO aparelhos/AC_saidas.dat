@@ -1,0 +1,210 @@
+printf "Tempo de Execucao: %f minutos \n", _solve_elapsed_time/60 >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia Ativa (Com Tarifa Branca): %4f.\n", fo_consumo_energia_ativa_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia Reativa (Com Tarifa Branca): %4f.\n\n", fo_consumo_energia_reativa_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia (Com Tarifa Branca): %4f.\n", fo_consumo_energia_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia Ativa (Sem Tarifa Branca): %4f.\n", fo_consumo_energia_ativa_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia Reativa (Sem Tarifa Branca): %4f.\n\n", fo_consumo_energia_reativa_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia (Sem Tarifa Branca): %4f.\n\n", fo_consumo_energia_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia dos ACs (Com Tarifa Branca): %4f.\n", fo_consumo_ac_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia dos ACs (Sem Tarifa Branca): %4f.\n\n", fo_consumo_ac_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia das Baterias (Com Tarifa Branca): %4f.\n", fo_consumo_bat_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia das Baterias (Sem Tarifa Branca): %4f.\n\n", fo_consumo_bat_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia dos PFVs (Com Tarifa Branca): %4f.\n", fo_consumo_pfv_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia dos PFVs (Sem Tarifa Branca): %4f.\n\n", fo_consumo_pfv_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Consumo de Energia dos Aparelhos (Com Tarifa Branca): %4f.\n", fo_consumo_aparelhos_com_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Consumo de Energia dos Aparelhos (Sem Tarifa Branca): %4f.\n\n", fo_consumo_aparelhos_sem_tarifa >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Perdas ativas na baixa tensão: %4f.\n", fo_perdas_ativas_baixa >> saidas\saidas_funcoes_objetivo.txt;
+printf "Perdas ativas na média tensão: %4f.\n\n", fo_perdas_ativas_media >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "Desconforto Térmico dos Usuários: %4f.\n\n",
+(sum{x in AC, t in Ot}abs(Tin[x,t,1] - Tset_casa[x] * AC_Fase_a[x])/card(Ot) +
+ sum{x in AC, t in Ot}abs(Tin[x,t,2] - Tset_casa[x] * AC_Fase_b[x])/card(Ot) +
+ sum{x in AC, t in Ot}abs(Tin[x,t,3] - Tset_casa[x] * AC_Fase_c[x])/card(Ot)
+)/card(AC)  >> saidas\saidas_funcoes_objetivo.txt;
+
+printf "----------------------------------------------------------------------------\n" >> saidas\saidas_funcoes_objetivo.txt;
+printf "----------------------------------------------------------------------------\n\n" >> saidas\saidas_funcoes_objetivo.txt;
+
+# Mostra os resultados 
+printf "Magnitudes de Tensao:" >> saidas\saida_Magnitudes_de_tensao.xls;
+printf "\n" >> saidas\saida_Magnitudes_de_tensao.xls;
+for {t in Ot}{
+	printf "Tempo %2d:\n", t >> saidas\saida_Magnitudes_de_tensao.xls;
+	printf "No \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_tensao.xls;
+	for {k in Ob}{
+		if (Nivel_b[k] == 1) then {
+			printf "%3d -> \t%6.4f \t%6.4f \t%6.4f", k, sqrt(Vra[k,t]^2 + Via[k,t]^2)/(24.9/sqrt(3)), sqrt(Vrb[k,t]^2 + Vib[k,t]^2)/(24.9/sqrt(3)), sqrt(Vrc[k,t]^2 + Vic[k,t]^2)/(24.9/sqrt(3)) >> saidas\saida_Magnitudes_de_tensao.xls;
+			printf "\n" >> saidas\saida_Magnitudes_de_tensao.xls;
+		}
+		if (Nivel_b[k] == 2) then {
+			printf "%3d -> \t%6.4f \t%6.4f \t%6.4f", k, sqrt(Vra[k,t]^2 + Via[k,t]^2)/(0.480/sqrt(3)), sqrt(Vrb[k,t]^2 + Vib[k,t]^2)/(0.480/sqrt(3)), sqrt(Vrc[k,t]^2 + Vic[k,t]^2)/(0.480/sqrt(3)) >> saidas\saida_Magnitudes_de_tensao.xls;
+			printf "\n" >> saidas\saida_Magnitudes_de_tensao.xls;
+		}
+	}
+	printf "\n" >> saidas\saida_Magnitudes_de_tensao.xls;
+}
+
+printf "Magnitudes de Tensao:" >> saidas\saida_Magnitudes_de_tensao2.xls;
+printf "\n" >> saidas\saida_Magnitudes_de_tensao2.xls;
+for {k in Ob}{
+			printf "No %2d:", k >> saidas\saida_Magnitudes_de_tensao2.xls;
+			printf "\n \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_tensao2.xls;
+	for {t in Ot}{
+		if (Nivel_b[k] == 1) then {
+			printf "%3d \t%6.4f \t%6.4f \t%6.4f", t, sqrt(Vra[k,t]^2 + Via[k,t]^2)/(24.9/sqrt(3)), sqrt(Vrb[k,t]^2 + Vib[k,t]^2)/(24.9/sqrt(3)), sqrt(Vrc[k,t]^2 + Vic[k,t]^2)/(24.9/sqrt(3)) >> saidas\saida_Magnitudes_de_tensao2.xls;
+			printf "\n" >> saidas\saida_Magnitudes_de_tensao2.xls;
+			}
+		if (Nivel_b[k] == 2) then {
+			printf "%3d \t%6.4f \t%6.4f \t%6.4f", t, sqrt(Vra[k,t]^2 + Via[k,t]^2)/(0.480/sqrt(3)), sqrt(Vrb[k,t]^2 + Vib[k,t]^2)/(0.480/sqrt(3)), sqrt(Vrc[k,t]^2 + Vic[k,t]^2)/(0.480/sqrt(3)) >> saidas\saida_Magnitudes_de_tensao2.xls;
+			printf "\n" >> saidas\saida_Magnitudes_de_tensao2.xls;
+			}
+	}
+	printf "\n" >> saidas\saida_Magnitudes_de_tensao2.xls;
+}
+
+ printf "Magnitudes de Corrente:" >> saidas\saida_Magnitudes_de_corrente.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente.xls;
+ for {t in Ot}{
+ 	printf "Tempo %2d:\n", t >> saidas\saida_Magnitudes_de_corrente.xls;
+ 	printf "Ramo \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente.xls;
+ 	for {(i,j) in Ol}{
+ 		printf "%3d-%3d -> \t%6.2f \t%6.2f \t%6.2f", i, j, sqrt(Ira[i,j,t]^2 + Iia[i,j,t]^2), sqrt(Irb[i,j,t]^2 + Iib[i,j,t]^2), sqrt(Irc[i,j,t]^2 + Iic[i,j,t]^2) >> saidas\saida_Magnitudes_de_corrente.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente.xls;
+ 	}
+ 	printf "\n" >> saidas\saida_Magnitudes_de_corrente.xls;
+ }
+ 
+ printf "Magnitudes de Corrente:" >> saidas\saida_Magnitudes_de_corrente2.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente2.xls;
+ for {(i,j) in Ol}{
+ 	printf "%3d -> %3d", i, j >> saidas\saida_Magnitudes_de_corrente2.xls;
+	printf "\n\tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente2.xls;
+ 	for {t in Ot}{
+ 		printf "%2d \t%6.2f \t%6.2f \t%6.2f", t , sqrt(Ira[i,j,t]^2 + Iia[i,j,t]^2), sqrt(Irb[i,j,t]^2 + Iib[i,j,t]^2), sqrt(Irc[i,j,t]^2 + Iic[i,j,t]^2) >> saidas\saida_Magnitudes_de_corrente2.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente2.xls;
+ 	}
+ 	printf "\n" >> saidas\saida_Magnitudes_de_corrente2.xls;
+ }
+ 
+ printf "Correntes de carga:" >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ for {t in Ot}{
+ 	printf "Tempo %2d:\n", t >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ 	printf "No \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ 	for {k in Ob}{
+ 		printf "%3d -> \t%6.4f \t%6.4f \t%6.4f", k, sqrt(IDra[k,t]^2 + IDia[k,t]^2), sqrt(IDrb[k,t]^2 + IDib[k,t]^2), sqrt(IDrc[k,t]^2 + IDic[k,t]^2) >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ 	}
+ 	printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga.xls;
+ }
+
+ printf "Correntes de carga:" >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ for {k in Ob}{
+ 	printf "No %3d:", k >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ 	printf "\n \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ 	for {t in Ot}{
+ 		printf "%3d \t%6.4f \t%6.4f \t%6.4f", t, sqrt(IDra[k,t]^2 + IDia[k,t]^2), sqrt(IDrb[k,t]^2 + IDib[k,t]^2), sqrt(IDrc[k,t]^2 + IDic[k,t]^2) >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ 	}
+ 	printf "\n" >> saidas\saida_Magnitudes_de_corrente_de_carga2.xls;
+ }
+ 
+ printf "ACs:" >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ for {t in Ot}{
+ 	printf "Tempo %2d:\n", t >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ 	printf "AC Correntes \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ 	for {w in AC}{
+ 		printf "%3d -> \t\t%6.4f \t%6.4f \t%6.4f", w, sqrt(Iac_re_a[w,t]^2 + Iac_im_a[w,t]^2), sqrt(Iac_re_b[w,t]^2 + Iac_im_b[w,t]^2), sqrt(Iac_re_c[w,t]^2 + Iac_im_c[w,t]^2) >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente_ac.xls;
+ 	}
+}
+
+ printf "ACs:" >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ printf "\n" >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ for {w in AC}{
+ 	printf "No %3d:", w >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ 	printf "\n \tFase A \tFase B \tFase C\n" >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ 	for {t in Ot}{
+ 		printf "%3d \t%6.4f \t%6.4f \t%6.4f", t, sqrt(Iac_re_a[w,t]^2 + Iac_im_a[w,t]^2), sqrt(Iac_re_b[w,t]^2 + Iac_im_b[w,t]^2), sqrt(Iac_re_c[w,t]^2 + Iac_im_c[w,t]^2) >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ 		printf "\n" >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ 	}
+ 	printf "\n" >> saidas\saida_Magnitudes_de_corrente_ac2.xls;
+ }
+ 
+ printf "COP ACs:" >> saidas\saida_COP.xls;
+ for {f in Of}{
+ printf "\n\n Fase: " >> saidas\saida_COP.xls;
+ printf "%i	 \n", f >> saidas\saida_COP.xls;
+ printf "\t" >> saidas\saida_COP.xls;
+
+	for {w in AC}{
+		printf "%i", w >> saidas\saida_COP.xls;
+		printf "\t" >> saidas\saida_COP.xls;	
+		}
+			for {t in Ot}{
+			printf "\n %i \t", t >> saidas\saida_COP.xls;	
+				for {w in AC}{
+					if (Pac[w,t,f] == 0) then {
+					printf "0" >> saidas\saida_COP.xls;
+					printf "\t" >> saidas\saida_COP.xls;
+					}
+					else{
+					printf "%6.4f", Hac[w,t,f]/Pac[w,t,f] >> saidas\saida_COP.xls;
+					printf "\t" >> saidas\saida_COP.xls;
+					}
+		}
+	}
+}
+
+# ACs
+display Pac>saidas\saida_Pac.xls;
+display frequency_ac>saidas\saida_frequency_ac.xls;
+display Tin>saidas\saida_Tin.xls;
+display Tparede>saidas\saida_Tparede.xls;
+display desconforto>saidas\saida_desconforto.xls;
+display Hac>saidas\saida_Hac.xls;
+display mod_Pac_freq>saidas\saida_mod_Pac_freq.xls;
+display mod_Hac_freq>saidas\saida_mod_Hac_freq.xls;
+
+option omit_zero_cols 0;
+
+display on_off>saidas\saida_ON_OFF.xls;
+
+option omit_zero_cols 1;
+
+option display_width 20;
+
+display Tout>saidas\saida_Tout.xls;
+display mod_Pac_Tout>saidas\saida_mod_Pac_Tout.xls;
+display mod_Hac_Tout>saidas\saida_mod_Hac_Tout.xls;
+
+option display_width 1000;
+
+# Baterias
+display carga_bateria>saidas\saida_carga_bateria.xls;
+display Pbateria_carga>saidas\Pbateria_carga.xls;
+display Pbateria_descarga>saidas\Pbateria_descarga.xls;
+display Qbateria_descarga>saidas\Qbateria_descarga.xls;
+
+# PFVs
+display pot_pfv>saidas\saida_pot_pfv.xls;
+
+# SE
+display ISra>saidas\saida_ISra.xls;
+display ISia>saidas\saida_ISia.xls;
+display ISrb>saidas\saida_ISrb.xls;
+display ISib>saidas\saida_ISib.xls;
+display ISrc>saidas\saida_ISrc.xls;
+display ISic>saidas\saida_ISic.xls;
+
+display Isqra>saidas\saida_Isqra.xls;
+display Ira>saidas\saida_Ira.xls;
