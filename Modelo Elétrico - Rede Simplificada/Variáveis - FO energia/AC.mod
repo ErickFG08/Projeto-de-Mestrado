@@ -349,7 +349,11 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 			(	(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Raa[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rab[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rac[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rab[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbb[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rbc[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rac[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbc[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rcc[j,i])	);			 
-					 
+
+	minimize fo_correntes_ao_quadrado: sum {(j,i) in Ol, t in Ot : Nivel_l[j,i] == 1} dT * tarifa_branca[t] * preco_energia * 
+				(Ira[j,i,t]^2 + Iia[j,i,t]^2 + Irb[j,i,t]^2 + Iib[j,i,t]^2 + Irc[j,i,t]^2 + Iic[j,i,t]^2);			 
+
+			 
 #--------------------------------------------- Balanço de fluxos de correntes --------------------------------------
 # Balanço de corrente da fase A
  
@@ -843,25 +847,25 @@ param Tinicial = 2.0;
 	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];
 	
 	subject to limitacao_carga_descarga_bateria_a3 {b in BAT : BAT_Fase_a[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 4 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 8 * capacidade_bat[b];
 	
 	subject to limitacao_carga_descarga_bateria_b1 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
-	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];	
+	(carga_bateria[b,t,2] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];	
 
 	subject to limitacao_carga_descarga_bateria_b2 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
-	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];
+	-(carga_bateria[b,t,2] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];
 	
 	subject to limitacao_carga_descarga_bateria_b3 {b in BAT : BAT_Fase_b[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 4 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 8 * capacidade_bat[b];
 	
 	subject to limitacao_carga_descarga_bateria_c1 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
-	(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];	
+	(carga_bateria[b,t,3] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];	
 
 	subject to limitacao_carga_descarga_bateria_c2 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
-	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];
+	-(carga_bateria[b,t,3] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];
 	
 	subject to limitacao_carga_descarga_bateria_c3 {b in BAT : BAT_Fase_c[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 4 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 8 * capacidade_bat[b];
 	
 	
 # END BATTERY
