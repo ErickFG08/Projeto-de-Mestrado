@@ -16,7 +16,7 @@ data AC_Dados_Modelo_Rede.dat;
 data AC.dat;
 
 # Define o solver e as opções
-option solver CPLEXamp;
+option solver cplexamp128;
 option display_1col 0;
 option display_round 4;
 option display_width 1000;

@@ -327,16 +327,16 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 	minimize fo_consumo_ac_sem_tarifa: (sum {w in AC, t in Ot, f in Of} Pac[w,t,f] * dT * preco_energia);
 
 # Geração de energia dos PFVs
-	minimize fo_consumo_pfv_com_tarifa: (sum {w in AC, t in Ot, f in Of} pot_pfv[w,t,f] * dT * tarifa_branca[t] * preco_energia);
-	minimize fo_consumo_pfv_sem_tarifa: (sum {w in AC, t in Ot, f in Of} pot_pfv[w,t,f] * dT * preco_energia);
+	minimize fo_consumo_pfv_com_tarifa: sum {p in PFV, t in Ot, f in Of} pot_pfv[p,t,f] * dT * tarifa_branca[t] * preco_energia;
+	minimize fo_consumo_pfv_sem_tarifa: sum {p in PFV, t in Ot, f in Of} pot_pfv[p,t,f] * dT * preco_energia;
 
 # Consumo de energia das Baterias
-	minimize fo_consumo_bat_com_tarifa: (sum {w in AC, t in Ot, f in Of} Pbateria_carga[w,t,f] * dT * tarifa_branca[t] * preco_energia);
-	minimize fo_consumo_bat_sem_tarifa: (sum {w in AC, t in Ot, f in Of} Pbateria_carga[w,t,f] * preco_energia);
+	minimize fo_consumo_bat_com_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * tarifa_branca[t] * preco_energia;
+	minimize fo_consumo_bat_sem_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * preco_energia;
 
 # Consumo de energia daos Aparelhos
-	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[w,t,f] + Qbateria_descarga[w,t,f] + pot_pfv[w,t,f]) * dT * tarifa_branca[t] * preco_energia);
-	minimize fo_consumo_aparelhos_sem_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[w,t,f] + Qbateria_descarga[w,t,f] + pot_pfv[w,t,f]) * dT * preco_energia);
+	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[w,t,f]) * dT * tarifa_branca[t] * preco_energia);
+	minimize fo_consumo_aparelhos_sem_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[w,t,f]) * dT * preco_energia);
 
 # Perdas ativas								
 	minimize fo_perdas_ativas_baixa: sum {(j,i) in Ol, t in Ot} dT * tarifa_branca[t] * preco_energia * 

@@ -167,6 +167,7 @@ for {k in Ob}{
 
 # ACs
 display Pac>saidas\saida_Pac.xls;
+display Qac>saidas\saida_Qac.xls;
 display frequency_ac>saidas\saida_frequency_ac.xls;
 display Tin>saidas\saida_Tin.xls;
 display Tparede>saidas\saida_Tparede.xls;
