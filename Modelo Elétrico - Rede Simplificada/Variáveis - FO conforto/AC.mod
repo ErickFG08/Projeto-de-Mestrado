@@ -335,8 +335,8 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 	minimize fo_consumo_bat_sem_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * preco_energia;
 
 # Consumo de energia daos Aparelhos
-	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + pot_pfv[w,t,f]) * dT * tarifa_branca[t] * preco_energia);
-	minimize fo_consumo_aparelhos_sem_tarifa:  (sum {w in AC, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + pot_pfv[w,t,f]) * dT * preco_energia);
+	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, b in BAT, p in PFV, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[p,t,f]) * dT * tarifa_branca[t] * preco_energia);
+	minimize fo_consumo_aparelhos_sem_tarifa:  (sum {w in AC, b in BAT, p in PFV, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[p,t,f]) * dT * preco_energia);
 
 # Perdas ativas								
 	minimize fo_perdas_ativas_baixa: sum {(j,i) in Ol, t in Ot} dT * tarifa_branca[t] * preco_energia * 
@@ -702,9 +702,6 @@ param Tinicial = 2.0;
 	subject to restricao_bat_0_1{b in BAT, t in Ot, f in Of : t == 1}:
 	carga_bateria[b,t,f] = 0;
 	
-#	subject to restricao_bat_0_2{b in BAT, t in Ot, f in Of : t >= card(Ot) - 1}:
-#	carga_bateria[b,t,f] = carga_bateria[b,1,f];
-
 
 	subject to restricao_bat_1_1{b in BAT, t in Ot, f in Of}:
 	carga_bateria[b,t,f] <= capacidade_bat[b];
@@ -847,7 +844,7 @@ param Tinicial = 2.0;
 	-(carga_bateria[b,t,1] -  carga_bateria[b,t-1,1]) <= Taux_bat2[b,t,1];
 	
 	subject to limitacao_carga_descarga_bateria_a3 {b in BAT : BAT_Fase_a[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 8 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,1] <= 4 * capacidade_bat[b];
 	
 	subject to limitacao_carga_descarga_bateria_b1 {b in BAT, t in Ot : BAT_Fase_b[b] == 1 and t > 1}:
 	(carga_bateria[b,t,2] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];	
@@ -856,7 +853,7 @@ param Tinicial = 2.0;
 	-(carga_bateria[b,t,2] -  carga_bateria[b,t-1,2]) <= Taux_bat2[b,t,2];
 	
 	subject to limitacao_carga_descarga_bateria_b3 {b in BAT : BAT_Fase_b[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 8 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,2] <= 4 * capacidade_bat[b];
 	
 	subject to limitacao_carga_descarga_bateria_c1 {b in BAT, t in Ot : BAT_Fase_c[b] == 1 and t > 1}:
 	(carga_bateria[b,t,3] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];	
@@ -865,7 +862,7 @@ param Tinicial = 2.0;
 	-(carga_bateria[b,t,3] -  carga_bateria[b,t-1,3]) <= Taux_bat2[b,t,3];
 	
 	subject to limitacao_carga_descarga_bateria_c3 {b in BAT : BAT_Fase_c[b] == 1}:
-	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 8 * capacidade_bat[b];
+	sum{t in Ot : t > 1} Taux_bat2[b,t,3] <= 4 * capacidade_bat[b];
 	
 	
 # END BATTERY

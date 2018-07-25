@@ -28,7 +28,6 @@ param neper := 2.71828;
 
 param fdem{Ot}; 				# Fator de demanda dos períodos de tempo
 param tarifa_branca{Ot};		# Fator que multiplica o preco da energia de acordo com o horario (tarifa branca) [%]
-param tarifa_artigo{Ot};		# Fator que multiplica o preco da energia de acordo com o horario (tarifa artigo Rider) [%]
 param preco_energia := 0.36448; # Preco da energia R$/kWh
 
 # Nós
@@ -133,7 +132,7 @@ var Hac{AC,Ot,Of} >= 0;					# Capacidade de refrigeração do AC [kW]
 var on_off{AC,Ot,Of} binary;			# Variável que determina se o AC está ligado ou desligado
 var frequency_ac{AC,Ot,Of} >= 0;		# Potência de refrigeração do AC [kW]
 
-param deltaT = 2;
+param deltaT = 999;
 
 ###################################################
 ###################################################
@@ -288,20 +287,20 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 # Consumo de energia
 
 	minimize fo_consumo_energia_ativa_com_tarifa:
-						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_artigo[t] * preco_energia) *
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t] +
 							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] );
 
 	minimize fo_consumo_energia_reativa_com_tarifa:
-						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_artigo[t] * preco_energia) *
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
 							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] );
 							 
 	minimize fo_consumo_energia_com_tarifa:
-						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_artigo[t] * preco_energia) *
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t] +
 							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] ) +
-						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_artigo[t] * preco_energia) *
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
 							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] );
 							 
@@ -319,42 +318,53 @@ var IDic{Ob,Ot};   					# Corrente imaginaria demandada na subestação na fase 
 						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * preco_energia) *
 							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t] +
 							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] ) +
-						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_artigo[t] * preco_energia) *
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
 							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
 							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] );
 
 # Consumo de energia dos aparelhos de AC
-	minimize fo_consumo_ac_com_tarifa: (sum {w in AC, t in Ot, f in Of} Pac[w,t,f] * dT * tarifa_artigo[t] * preco_energia);
+	minimize fo_consumo_ac_com_tarifa: (sum {w in AC, t in Ot, f in Of} Pac[w,t,f] * dT * tarifa_branca[t] * preco_energia);
 	minimize fo_consumo_ac_sem_tarifa: (sum {w in AC, t in Ot, f in Of} Pac[w,t,f] * dT * preco_energia);
 
 # Geração de energia dos PFVs
-	minimize fo_consumo_pfv_com_tarifa: sum {p in PFV, t in Ot, f in Of} pot_pfv[p,t,f] * dT * tarifa_artigo[t] * preco_energia;
+	minimize fo_consumo_pfv_com_tarifa: sum {p in PFV, t in Ot, f in Of} pot_pfv[p,t,f] * dT * tarifa_branca[t] * preco_energia;
 	minimize fo_consumo_pfv_sem_tarifa: sum {p in PFV, t in Ot, f in Of} pot_pfv[p,t,f] * dT * preco_energia;
 
 # Consumo de energia das Baterias
-	minimize fo_consumo_bat_com_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * tarifa_artigo[t] * preco_energia;
+	minimize fo_consumo_bat_com_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * tarifa_branca[t] * preco_energia;
 	minimize fo_consumo_bat_sem_tarifa: sum {b in BAT, t in Ot, f in Of} (Pbateria_carga[b,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f]) * dT * preco_energia;
 
 # Consumo de energia daos Aparelhos
-	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, b in BAT, p in PFV, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[p,t,f]) * dT * tarifa_artigo[t] * preco_energia);
+	minimize fo_consumo_aparelhos_com_tarifa:  (sum {w in AC, b in BAT, p in PFV, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[p,t,f]) * dT * tarifa_branca[t] * preco_energia);
 	minimize fo_consumo_aparelhos_sem_tarifa:  (sum {w in AC, b in BAT, p in PFV, t in Ot, f in Of} (Pac[w,t,f] + Pbateria_carga[w,t,f] + Pbateria_descarga[b,t,f] + Qbateria_descarga[b,t,f] + pot_pfv[p,t,f]) * dT * preco_energia);
 
 # Perdas ativas								
-	minimize fo_perdas_ativas_baixa: sum {(j,i) in Ol, t in Ot} dT * tarifa_artigo[t] * preco_energia * 
+	minimize fo_perdas_ativas_baixa: sum {(j,i) in Ol, t in Ot} dT * tarifa_branca[t] * preco_energia * 
 			(	(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Raa[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rab[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rac[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rab[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbb[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rbc[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rac[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbc[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rcc[j,i])	);
 
 					 
-	minimize fo_perdas_ativas_media: sum {(j,i) in Ol, t in Ot : Nivel_l[j,i] == 1} dT * tarifa_artigo[t] * preco_energia * 
+	minimize fo_perdas_ativas_media: sum {(j,i) in Ol, t in Ot : Nivel_l[j,i] == 1} dT * tarifa_branca[t] * preco_energia * 
 			(	(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Raa[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rab[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rac[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rab[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbb[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rbc[j,i]) +
 				(sqrt(Ira[j,i,t]^2 + Iia[j,i,t]^2) * Rac[j,i] + sqrt(Irb[j,i,t]^2 + Iib[j,i,t]^2) * Rbc[j,i] + sqrt(Irc[j,i,t]^2 + Iic[j,i,t]^2) * Rcc[j,i])	);			 
 
-	minimize fo_correntes_ao_quadrado: sum {(j,i) in Ol, t in Ot : Nivel_l[j,i] == 1} dT * tarifa_artigo[t] * preco_energia * 
+	minimize fo_correntes_ao_quadrado: sum {(j,i) in Ol, t in Ot : Nivel_l[j,i] == 1} dT * tarifa_branca[t] * preco_energia * 
 				(Ira[j,i,t]^2 + Iia[j,i,t]^2 + Irb[j,i,t]^2 + Iib[j,i,t]^2 + Irc[j,i,t]^2 + Iic[j,i,t]^2);			 
 
-			 
+	minimize fo_multiobjetivo: 
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
+							(ISra[i,t] * Vra[i,t] + ISrb[i,t] * Vrb[i,t] + ISrc[i,t] * Vrc[i,t]   +
+							 ISia[i,t] * Via[i,t] + ISib[i,t] * Vib[i,t] + ISic[i,t] * Vic[i,t] ) +
+						sum {i in Ob, t in Ot : Tipo[i] == 1} (dT * tarifa_branca[t] * preco_energia) *
+							(- ISia[i,t] * Vra[i,t] - ISib[i,t] * Vrb[i,t] - ISic[i,t] * Vrc[i,t] +
+							 ISra[i,t] * Via[i,t] + ISrb[i,t] * Vib[i,t] + ISrc[i,t] * Vic[i,t] ) +
+						(sum {w in AC, f in Of, t in Ot} (desconforto[w,t,f]))/card(AC)/card(Ot)  ;
+
+subject to pareto:
+	(sum {w in AC, f in Of, t in Ot} (desconforto[w,t,f]))/card(AC)/card(Ot) <= 1.0;
+
 #--------------------------------------------- Balanço de fluxos de correntes --------------------------------------
 # Balanço de corrente da fase A
  
